@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API de Auditoria e Controle Interno</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            min-width: 150px;
+        }
+
+        .tab-button:hover {
+            background: #e8e8e8;
+            color: #667eea;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .badge-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .badge-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state::before {
+            content: "📋";
+            font-size: 4em;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                border-bottom: 1px solid #e0e0e0;
+                border-right: none;
+            }
+
+            .tab-button.active {
+                border-bottom-color: #e0e0e0;
+                border-left: 3px solid #667eea;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> API de Auditoria</h1>
+            <p>Sistema de Controle Interno e Auditoria</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('politicas')">Políticas</button>
+            <button class="tab-button" onclick="showTab('permissoes')">Permissões</button>
+            <button class="tab-button" onclick="showTab('logs')">Logs de Acesso</button>
+            <button class="tab-button" onclick="showTab('trilhas')">Trilhas de Auditoria</button>
+        </div>
+
+        <!-- Políticas -->
+        <div id="politicas" class="tab-content active">
+            <div class="section">
+                <h2>Criar Nova Política</h2>
+                <div id="politica-message" class="message"></div>
+                <form id="politica-form" onsubmit="criarPolitica(event)">
+                    <div class="form-group">
+                        <label>Usuário Responsável *</label>
+                        <select id="politica-usuario" required>
+                            <option value="">Carregando usuários...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome *</label>
+                        <input type="text" id="politica-nome" required maxlength="200">
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição *</label>
+                        <textarea id="politica-descricao" required maxlength="1000"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="politica-ativa" checked>
+                            <label for="politica-ativa">Política Ativa</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Criar Política</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h2>Buscar Política por ID</h2>
+                <div class="search-box">
+                    <input type="number" id="politica-search-id" placeholder="Digite o ID da política">
+                    <button class="btn btn-secondary" onclick="buscarPoliticaPorId()">Buscar</button>
+                </div>
+                <div id="politica-resultado"></div>
+            </div>
+
+            <div class="section">
+                <h2>Listar Todas as Políticas</h2>
+                <button class="btn btn-primary" onclick="listarPoliticas()">Atualizar Lista</button>
+                <div id="politicas-lista" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- Permissões -->
+        <div id="permissoes" class="tab-content">
+            <div class="section">
+                <h2>Criar Nova Permissão</h2>
+                <div id="permissao-message" class="message"></div>
+                <form id="permissao-form" onsubmit="criarPermissao(event)">
+                    <div class="form-group">
+                        <label>Usuário Responsável *</label>
+                        <select id="permissao-usuario" required>
+                            <option value="">Carregando usuários...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome *</label>
+                        <input type="text" id="permissao-nome" required maxlength="100">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nível (1-5) *</label>
+                            <input type="number" id="permissao-nivel" required min="1" max="5">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição *</label>
+                        <textarea id="permissao-descricao" required maxlength="500"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Criar Permissão</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h2>Buscar Permissão por ID</h2>
+                <div class="search-box">
+                    <input type="number" id="permissao-search-id" placeholder="Digite o ID da permissão">
+                    <button class="btn btn-secondary" onclick="buscarPermissaoPorId()">Buscar</button>
+                </div>
+                <div id="permissao-resultado"></div>
+            </div>
+
+            <div class="section">
+                <h2>Listar Todas as Permissões</h2>
+                <button class="btn btn-primary" onclick="listarPermissoes()">Atualizar Lista</button>
+                <div id="permissoes-lista" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- Logs de Acesso -->
+        <div id="logs" class="tab-content">
+            <div class="section">
+                <h2>Criar Novo Log de Acesso</h2>
+                <div id="log-message" class="message"></div>
+                <form id="log-form" onsubmit="criarLog(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Usuário *</label>
+                            <input type="text" id="log-usuario" required maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label>IP de Origem *</label>
+                            <input type="text" id="log-ip" required maxlength="45" placeholder="192.168.1.1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Ação *</label>
+                        <input type="text" id="log-acao" required maxlength="200" placeholder="Login, Logout, etc.">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Criar Log</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h2>Buscar Log por ID</h2>
+                <div class="search-box">
+                    <input type="number" id="log-search-id" placeholder="Digite o ID do log">
+                    <button class="btn btn-secondary" onclick="buscarLogPorId()">Buscar</button>
+                </div>
+                <div id="log-resultado"></div>
+            </div>
+
+            <div class="section">
+                <h2>Listar Todos os Logs</h2>
+                <button class="btn btn-primary" onclick="listarLogs()">Atualizar Lista</button>
+                <div id="logs-lista" class="table-container"></div>
+            </div>
+        </div>
+
+        <!-- Trilhas de Auditoria -->
+        <div id="trilhas" class="tab-content">
+            <div class="section">
+                <h2>Criar Nova Trilha de Auditoria</h2>
+                <div id="trilha-message" class="message"></div>
+                <form id="trilha-form" onsubmit="criarTrilha(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Entidade Afetada *</label>
+                            <input type="text" id="trilha-entidade" required maxlength="100" placeholder="Usuario, Produto, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de Operação *</label>
+                            <select id="trilha-operacao" required>
+                                <option value="">Selecione...</option>
+                                <option value="CREATE">CREATE</option>
+                                <option value="UPDATE">UPDATE</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Usuário *</label>
+                        <input type="text" id="trilha-usuario" required maxlength="100">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Dados Anteriores (JSON - Opcional)</label>
+                            <textarea id="trilha-dados-anteriores" placeholder='{"campo": "valor"}'></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Dados Novos (JSON - Opcional)</label>
+                            <textarea id="trilha-dados-novos" placeholder='{"campo": "valor"}'></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Criar Trilha</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h2>Buscar Trilha por ID</h2>
+                <div class="search-box">
+                    <input type="number" id="trilha-search-id" placeholder="Digite o ID da trilha">
+                    <button class="btn btn-secondary" onclick="buscarTrilhaPorId()">Buscar</button>
+                </div>
+                <div id="trilha-resultado"></div>
+            </div>
+
+            <div class="section">
+                <h2>Listar Todas as Trilhas</h2>
+                <button class="btn btn-primary" onclick="listarTrilhas()">Atualizar Lista</button>
+                <div id="trilhas-lista" class="table-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+
+        // Função para alternar entre abas
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Função auxiliar para mostrar mensagens
+        function showMessage(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `message ${isError ? 'error' : 'success'}`;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // Variável global para armazenar usuários
+        let usuariosDisponiveis = [];
+
+        // Carregar usuários disponíveis
+        async function carregarUsuarios() {
+            try {
+                const result = await apiRequest(`${API_BASE}/usuarios`);
+                if (result.success) {
+                    usuariosDisponiveis = result.data;
+                    preencherSelectsUsuarios();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+            }
+        }
+
+        // Preencher todos os selects de usuário
+        function preencherSelectsUsuarios() {
+            const selects = ['politica-usuario', 'permissao-usuario'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Selecione um usuário...</option>';
+                    usuariosDisponiveis.forEach(usuario => {
+                        const option = document.createElement('option');
+                        option.value = usuario;
+                        option.textContent = usuario;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // Função auxiliar para fazer requisições
+        async function apiRequest(url, method = 'GET', body = null, usuario = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                if (usuario) {
+                    options.headers['X-Usuario'] = usuario;
+                }
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+                const response = await fetch(url, options);
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || data.title || 'Erro na requisição');
+                }
+                return { success: true, data };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // ========== POLÍTICAS ==========
+        async function criarPolitica(event) {
+            event.preventDefault();
+            const usuario = document.getElementById('politica-usuario').value;
+            if (!usuario) {
+                showMessage('politica-message', 'Selecione um usuário responsável', true);
+                return;
+            }
+            const politica = {
+                nome: document.getElementById('politica-nome').value,
+                descricao: document.getElementById('politica-descricao').value,
+                ativa: document.getElementById('politica-ativa').checked
+            };
+            const result = await apiRequest(`${API_BASE}/politicas`, 'POST', politica, usuario);
+            if (result.success) {
+                showMessage('politica-message', 'Política criada com sucesso!', false);
+                document.getElementById('politica-form').reset();
+                preencherSelectsUsuarios(); // Restaurar selects
+                listarPoliticas();
+            } else {
+                showMessage('politica-message', result.error, true);
+            }
+        }
+
+        async function buscarPoliticaPorId() {
+            const id = document.getElementById('politica-search-id').value;
+            if (!id) {
+                showMessage('politica-message', 'Digite um ID válido', true);
+                return;
+            }
+            const result = await apiRequest(`${API_BASE}/politicas/${id}`);
+            const resultadoDiv = document.getElementById('politica-resultado');
+            if (result.success) {
+                const p = result.data;
+                resultadoDiv.innerHTML = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Descrição</th>
+                                    <th>Data Criação</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>${p.id}</td>
+                                    <td>${p.nome}</td>
+                                    <td>${p.descricao}</td>
+                                    <td>${new Date(p.dataCriacao).toLocaleString('pt-BR')}</td>
+                                    <td><span class="badge ${p.ativa ? 'badge-success' : 'badge-danger'}">${p.ativa ? 'Ativa' : 'Inativa'}</span></td>
+                                    <td>
+                                        <button class="btn ${p.ativa ? 'btn-secondary' : 'btn-primary'}" onclick="toggleStatusPolitica(${p.id}, ${p.ativa})">
+                                            ${p.ativa ? 'Desativar' : 'Ativar'}
+                                        </button>
+                                        <button class="btn btn-danger" onclick="deletarPolitica(${p.id})">Deletar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                resultadoDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        }
+
+        async function listarPoliticas() {
+            const result = await apiRequest(`${API_BASE}/politicas`);
+            const listaDiv = document.getElementById('politicas-lista');
+            if (result.success) {
+                const politicas = result.data;
+                if (politicas.length === 0) {
+                    listaDiv.innerHTML = '<div class="empty-state">Nenhuma política encontrada</div>';
+                    return;
+                }
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Data Criação</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                politicas.forEach(p => {
+                    html += `
+                        <tr>
+                            <td>${p.id}</td>
+                            <td>${p.nome}</td>
+                            <td>${p.descricao.substring(0, 100)}${p.descricao.length > 100 ? '...' : ''}</td>
+                            <td>${new Date(p.dataCriacao).toLocaleString('pt-BR')}</td>
+                            <td><span class="badge ${p.ativa ? 'badge-success' : 'badge-danger'}">${p.ativa ? 'Ativa' : 'Inativa'}</span></td>
+                            <td>
+                                <button class="btn ${p.ativa ? 'btn-secondary' : 'btn-primary'}" onclick="toggleStatusPolitica(${p.id}, ${p.ativa})">
+                                    ${p.ativa ? 'Desativar' : 'Ativar'}
+                                </button>
+                                <button class="btn btn-danger" onclick="deletarPolitica(${p.id})">Deletar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+                listaDiv.innerHTML = html;
+            } else {
+                listaDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        }
+
+        async function toggleStatusPolitica(id, statusAtual) {
+            const acao = statusAtual ? 'desativar' : 'ativar';
+            if (!confirm(`Tem certeza que deseja ${acao} a política ${id}?`)) return;
+            
+            const usuario = prompt('Digite o nome do usuário responsável:');
+            if (!usuario) {
+                showMessage('politica-message', 'Usuário é obrigatório', true);
+                return;
+            }
+            
+            const result = await apiRequest(`${API_BASE}/politicas/${id}/toggle-status`, 'PUT', null, usuario);
+            if (result.success) {
+                showMessage('politica-message', result.data.message, false);
+                listarPoliticas();
+                // Atualizar também a busca por ID se estiver visível
+                const searchId = document.getElementById('politica-search-id').value;
+                if (searchId == id) {
+                    buscarPoliticaPorId();
+                }
+            } else {
+                showMessage('politica-message', result.error, true);
+            }
+        }
+
+        async function deletarPolitica(id) {
+            if (!confirm(`Tem certeza que deseja deletar a política ${id}?`)) return;
+            
+            const usuario = prompt('Digite o nome do usuário responsável:');
+            if (!usuario) {
+                showMessage('politica-message', 'Usuário é obrigatório', true);
+                return;
+            }
+            
+            const result = await apiRequest(`${API_BASE}/politicas/${id}`, 'DELETE', null, usuario);
+            if (result.success) {
+                showMessage('politica-message', 'Política deletada com sucesso!', false);
+                listarPoliticas();
+            } else {
+                showMessage('politica-message', result.error, true);
+            }
+        }
+
+        // ========== PERMISSÕES ==========
+        async function criarPermissao(event) {
+            event.preventDefault();
+            const usuario = document.getElementById('permissao-usuario').value;
+            if (!usuario) {
+                showMessage('permissao-message', 'Selecione um usuário responsável', true);
+                return;
+            }
+            const permissao = {
+                nome: document.getElementById('permissao-nome').value,
+                nivel: parseInt(document.getElementById('permissao-nivel').value),
+                descricao: document.getElementById('permissao-descricao').value
+            };
+            const result = await apiRequest(`${API_BASE}/permissoes`, 'POST', permissao, usuario);
+            if (result.success) {
+                showMessage('permissao-message', 'Permissão criada com sucesso!', false);
+                document.getElementById('permissao-form').reset();
+                preencherSelectsUsuarios(); // Restaurar selects
+                listarPermissoes();
+            } else {
+                showMessage('permissao-message', result.error, true);
+            }
+        }
+
+        async function buscarPermissaoPorId() {
+            const id = document.getElementById('permissao-search-id').value;
+            if (!id) {
+                showMessage('permissao-message', 'Digite um ID válido', true);
+                return;
+            }
+            const result = await apiRequest(`${API_BASE}/permissoes/${id}`);
+            const resultadoDiv = document.getElementById('permissao-resultado');
+            if (result.success) {
+                const p = result.data;
+                resultadoDiv.innerHTML = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Nível</th>
+                                    <th>Descrição</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>${p.id}</td>
+                                    <td>${p.nome}</td>
+                                    <td><span class="badge badge-info">${p.nivel}</span></td>
+                                    <td>${p.descricao}</td>
+                                    <td><button class="btn btn-danger" onclick="deletarPermissao(${p.id})">Deletar</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                resultadoDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        }
+
+        async function listarPermissoes() {
+            const result = await apiRequest(`${API_BASE}/permissoes`);
+            const listaDiv = document.getElementById('permissoes-lista');
+            if (result.success) {
+                const permissoes = result.data;
+                if (permissoes.length === 0) {
+                    listaDiv.innerHTML = '<div class="empty-state">Nenhuma permissão encontrada</div>';
+                    return;
+                }
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Nível</th>
+                                <th>Descrição</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                permissoes.forEach(p => {
+                    html += `
+                        <tr>
+                            <td>${p.id}</td>
+                            <td>${p.nome}</td>
+                            <td><span class="badge badge-info">${p.nivel}</span></td>
+                            <td>${p.descricao}</td>
+                            <td><button class="btn btn-danger" onclick="deletarPermissao(${p.id})">Deletar</button></td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+                listaDiv.innerHTML = html;
+            } else {
+                listaDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        }
+
+        async function deletarPermissao(id) {
+            if (!confirm(`Tem certeza que deseja deletar a permissão ${id}?`)) return;
+            
+            const usuario = prompt('Digite o nome do usuário responsável:');
+            if (!usuario) {
+                showMessage('permissao-message', 'Usuário é obrigatório', true);
+                return;
+            }
+            
+            const result = await apiRequest(`${API_BASE}/permissoes/${id}`, 'DELETE', null, usuario);
+            if (result.success) {
+                showMessage('permissao-message', 'Permissão deletada com sucesso!', false);
+                listarPermissoes();
+            } else {
+                showMessage('permissao-message', result.error, true);
+            }
+        }
+
+        // ========== LOGS DE ACESSO ==========
+        async function criarLog(event) {
+            event.preventDefault();
+            const log = {
+                usuario: document.getElementById('log-usuario').value,
+                acao: document.getElementById('log-acao').value,
+                ipOrigem: document.getElementById('log-ip').value
+            };
+            const result = await apiRequest(`${API_BASE}/logsacesso`, 'POST', log);
+            if (result.success) {
+                showMessage('log-message', 'Log criado com sucesso!', false);
+                document.getElementById('log-form').reset();
+                listarLogs();
+            } else {
+                showMessage('log-message', result.error, true);
+            }
+        }
+
+        async function buscarLogPorId() {
+            const id = document.getElementById('log-search-id').value;
+            if (!id) {
+                showMessage('log-message', 'Digite um ID válido', true);
+                return;
+            }
+            const result = await apiRequest(`${API_BASE}/logsacesso/${id}`);
+            const resultadoDiv = document.getElementById('log-resultado');
+            if (result.success) {
+                const log = result.data;
+                resultadoDiv.innerHTML = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuário</th>
+                                    <th>Ação</th>
+                                    <th>Data/Hora</th>
+                                    <th>IP de Origem</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>${log.id}</td>
+                                    <td>${log.usuario}</td>
+                                    <td>${log.acao}</td>
+                                    <td>${new Date(log.dataHora).toLocaleString('pt-BR')}</td>
+                                    <td>${log.ipOrigem}</td>
+                                    <td><button class="btn btn-danger" onclick="deletarLog(${log.id})">Deletar</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                resultadoDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        }
+
+        async function listarLogs() {
+            const result = await apiRequest(`${API_BASE}/logsacesso`);
+            const listaDiv = document.getElementById('logs-lista');
+            if (result.success) {
+                const logs = result.data;
+                if (logs.length === 0) {
+                    listaDiv.innerHTML = '<div class="empty-state">Nenhum log encontrado</div>';
+                    return;
+                }
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuário</th>
+                                <th>Ação</th>
+                                <th>Data/Hora</th>
+                                <th>IP de Origem</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                logs.forEach(log => {
+                    html += `
+                        <tr>
+                            <td>${log.id}</td>
+                            <td>${log.usuario}</td>
+                            <td>${log.acao}</td>
+                            <td>${new Date(log.dataHora).toLocaleString('pt-BR')}</td>
+                            <td>${log.ipOrigem}</td>
+                            <td><button class="btn btn-danger" onclick="deletarLog(${log.id})">Deletar</button></td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+                listaDiv.innerHTML = html;
+            } else {
+                listaDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        }
+
+        async function deletarLog(id) {
+            if (!confirm(`Tem certeza que deseja deletar o log ${id}?`)) return;
+            const result = await apiRequest(`${API_BASE}/logsacesso/${id}`, 'DELETE');
+            if (result.success) {
+                showMessage('log-message', 'Log deletado com sucesso!', false);
+                listarLogs();
+            } else {
+                showMessage('log-message', result.error, true);
+            }
+        }
+
+        // ========== TRILHAS DE AUDITORIA ==========
+        async function criarTrilha(event) {
+            event.preventDefault();
+            const trilha = {
+                entidadeAfetada: document.getElementById('trilha-entidade').value,
+                tipoOperacao: document.getElementById('trilha-operacao').value,
+                usuario: document.getElementById('trilha-usuario').value,
+                dadosAnteriores: document.getElementById('trilha-dados-anteriores').value || null,
+                dadosNovos: document.getElementById('trilha-dados-novos').value || null
+            };
+            const result = await apiRequest(`${API_BASE}/trilhasauditoria`, 'POST', trilha);
+            if (result.success) {
+                showMessage('trilha-message', 'Trilha criada com sucesso!', false);
+                document.getElementById('trilha-form').reset();
+                listarTrilhas();
+            } else {
+                showMessage('trilha-message', result.error, true);
+            }
+        }
+
+        async function buscarTrilhaPorId() {
+            const id = document.getElementById('trilha-search-id').value;
+            if (!id) {
+                showMessage('trilha-message', 'Digite um ID válido', true);
+                return;
+            }
+            const result = await apiRequest(`${API_BASE}/trilhasauditoria/${id}`);
+            const resultadoDiv = document.getElementById('trilha-resultado');
+            if (result.success) {
+                const t = result.data;
+                resultadoDiv.innerHTML = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Entidade</th>
+                                    <th>Operação</th>
+                                    <th>Usuário</th>
+                                    <th>Data/Hora</th>
+                                    <th>Dados Anteriores</th>
+                                    <th>Dados Novos</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>${t.id}</td>
+                                    <td>${t.entidadeAfetada}</td>
+                                    <td><span class="badge badge-info">${t.tipoOperacao}</span></td>
+                                    <td>${t.usuario}</td>
+                                    <td>${new Date(t.dataHora).toLocaleString('pt-BR')}</td>
+                                    <td>${t.dadosAnteriores || '-'}</td>
+                                    <td>${t.dadosNovos || '-'}</td>
+                                    <td><button class="btn btn-danger" onclick="deletarTrilha(${t.id})">Deletar</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                resultadoDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        }
+
+        async function listarTrilhas() {
+            const result = await apiRequest(`${API_BASE}/trilhasauditoria`);
+            const listaDiv = document.getElementById('trilhas-lista');
+            if (result.success) {
+                const trilhas = result.data;
+                if (trilhas.length === 0) {
+                    listaDiv.innerHTML = '<div class="empty-state">Nenhuma trilha encontrada</div>';
+                    return;
+                }
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Entidade</th>
+                                <th>Operação</th>
+                                <th>Usuário</th>
+                                <th>Data/Hora</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                trilhas.forEach(t => {
+                    html += `
+                        <tr>
+                            <td>${t.id}</td>
+                            <td>${t.entidadeAfetada}</td>
+                            <td><span class="badge badge-info">${t.tipoOperacao}</span></td>
+                            <td>${t.usuario}</td>
+                            <td>${new Date(t.dataHora).toLocaleString('pt-BR')}</td>
+                            <td><button class="btn btn-danger" onclick="deletarTrilha(${t.id})">Deletar</button></td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+                listaDiv.innerHTML = html;
+            } else {
+                listaDiv.innerHTML = `<div class="message error">${result.error}</div>`;
+            }
+        }
+
+        async function deletarTrilha(id) {
+            if (!confirm(`Tem certeza que deseja deletar a trilha ${id}?`)) return;
+            const result = await apiRequest(`${API_BASE}/trilhasauditoria/${id}`, 'DELETE');
+            if (result.success) {
+                showMessage('trilha-message', 'Trilha deletada com sucesso!', false);
+                listarTrilhas();
+            } else {
+                showMessage('trilha-message', result.error, true);
+            }
+        }
+
+        // Carregar listas ao abrir cada aba
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.textContent.toLowerCase();
+                if (tabName.includes('política')) {
+                    setTimeout(listarPoliticas, 100);
+                } else if (tabName.includes('permissão')) {
+                    setTimeout(listarPermissoes, 100);
+                } else if (tabName.includes('log')) {
+                    setTimeout(listarLogs, 100);
+                } else if (tabName.includes('trilha')) {
+                    setTimeout(listarTrilhas, 100);
+                }
+            });
+        });
+
+        // Carregar políticas e usuários ao carregar a página
+        window.onload = function() {
+            carregarUsuarios();
+            listarPoliticas();
+        };
+    </script>
+</body>
+</html>
+
