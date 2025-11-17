@@ -88,6 +88,9 @@ As rotas estão organizadas por tipo de operação HTTP em arquivos separados:
 - `POST /api/trilhasauditoria` - Criar nova trilha
 - `DELETE /api/trilhasauditoria/{id}` - Excluir trilha
 
+### Estatísticas
+- `GET /api/estatisticas` - Listar todas estatisticas geradas dos demais endpoints
+
 ## Dados Iniciais
 
 O sistema é automaticamente populado com dados de exemplo na primeira execução:
