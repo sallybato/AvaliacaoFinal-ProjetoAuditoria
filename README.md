@@ -36,6 +36,10 @@ Trabalho-API/
 ├── Data/                # DbContext e configurações
 │   ├── ControleInternoContext.cs
 │   └── SeedData.cs
+├── wwwroot/                # Frontend
+│   ├── index.html # Integração da API com FrontEnd, com a interface grafica do front com HTML e CSS
+├── Services/              
+│   ├── AuditoriaService.cs # Adiciona automaticamente nas trilhas de auditoria qualquer operação do usuario  
 ├── Program.cs           # Configuração da aplicação
 └── Auditoria.csproj    # Arquivo de projeto
 ```
